@@ -1,8 +1,10 @@
+import os
 from fastapi import FastAPI, HTTPException, Depends, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
-import os
 from dotenv import load_dotenv
 
 # Import our services
@@ -20,7 +22,7 @@ app = FastAPI(title="VendorFlow API")
 # Configure CORS for frontend access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("FRONTEND_URL", "http://localhost:5173")],
+    allow_origins=[os.getenv("FRONTEND_URL", "*")],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -37,9 +39,10 @@ class ChatMessage(BaseModel):
 
 # --- Routes ---
 
-@app.get("/")
+@app.get("/api/health")
 def read_root():
     return {"status": "VendorFlow Backend Running"}
+
 
 @app.get("/api/auth/login")
 def login():
@@ -115,6 +118,24 @@ def trigger_followups():
     results = gmail_service.run_followup_job()
     return {"status": "completed", "results": results}
 
+# --- Serve React Frontend (For Production/Cloud Run) ---
+frontend_dist = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")
+
+if os.path.exists(frontend_dist):
+    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
+    
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        # Serve index.html for all non-API routes to support React Router
+        if full_path.startswith("api/"):
+            raise HTTPException(status_code=404, detail="API route not found")
+        index_path = os.path.join(frontend_dist, "index.html")
+        if os.path.exists(index_path):
+            return FileResponse(index_path)
+        return {"error": "Frontend build not found"}
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    # Use PORT env var provided by Cloud Run, fallback to 8000
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
