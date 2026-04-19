@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckCircle, Clock } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import api from '../api/client';
 
 export default function ApprovalPanel({ vendorId, currentStatus, onStatusChange }) {
@@ -23,44 +23,44 @@ export default function ApprovalPanel({ vendorId, currentStatus, onStatusChange 
   const pendingFinance = currentStatus === 'Pending Finance Approval';
 
   return (
-    <div className="glass-panel p-6">
-      <h3 className="text-lg font-semibold text-surface-900 mb-4">Approval Routing</h3>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between p-4 rounded-xl border border-surface-200 bg-surface-50">
-          <div className="flex items-center space-x-3">
-            <div className={`p-2 rounded-full ${pendingFinance || currentStatus === 'Approved' ? 'bg-emerald-100 text-emerald-600' : 'bg-surface-200 text-surface-500'}`}>
-              <CheckCircle className="w-5 h-5" />
+    <div className="card-panel p-8 md:p-10">
+      <h3 className="text-3xl font-display font-bold text-white mb-8 pb-6 border-b border-dark-700">Approval Routing</h3>
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between p-6 rounded-[1.5rem] border border-dark-700 bg-dark-900/50">
+          <div className="flex items-center space-x-4 mb-4 sm:mb-0 w-full">
+            <div className={`p-3 rounded-2xl ${pendingFinance || currentStatus === 'Approved' ? 'bg-emerald-900/30 text-emerald-400 border border-emerald-900/50' : 'bg-dark-800 text-dark-500 border border-dark-700 shadow-inner'}`}>
+              <CheckCircle className="w-6 h-6" />
             </div>
             <div>
-              <p className="font-medium text-surface-900">Legal Team</p>
-              <p className="text-sm text-surface-500">Requires SOC2 and NDA validation</p>
+              <p className="font-bold text-white text-lg">Legal Team</p>
+              <p className="text-sm font-medium text-dark-400">Requires SOC2 and NDA validation</p>
             </div>
           </div>
           <button 
             onClick={() => handleApprove('Legal')}
             disabled={!isUnderReview || loading}
-            className="btn-secondary"
+            className="btn-secondary w-full sm:w-auto flex-shrink-0"
           >
-            {loading === 'Legal' ? 'Scheduling...' : 'Request Legal Approval'}
+            {loading === 'Legal' ? 'Scheduling...' : 'Request Approval'}
           </button>
         </div>
 
-        <div className="flex items-center justify-between p-4 rounded-xl border border-surface-200 bg-surface-50">
-          <div className="flex items-center space-x-3">
-            <div className={`p-2 rounded-full ${currentStatus === 'Approved' ? 'bg-emerald-100 text-emerald-600' : 'bg-surface-200 text-surface-500'}`}>
-              <CheckCircle className="w-5 h-5" />
+        <div className="flex flex-col sm:flex-row items-center justify-between p-6 rounded-[1.5rem] border border-dark-700 bg-dark-900/50">
+          <div className="flex items-center space-x-4 mb-4 sm:mb-0 w-full">
+            <div className={`p-3 rounded-2xl ${currentStatus === 'Approved' ? 'bg-emerald-900/30 text-emerald-400 border border-emerald-900/50' : 'bg-dark-800 text-dark-500 border border-dark-700 shadow-inner'}`}>
+              <CheckCircle className="w-6 h-6" />
             </div>
             <div>
-              <p className="font-medium text-surface-900">Finance Team</p>
-              <p className="text-sm text-surface-500">Requires Bank Details validation</p>
+              <p className="font-bold text-white text-lg">Finance Team</p>
+              <p className="text-sm font-medium text-dark-400">Requires Bank Details validation</p>
             </div>
           </div>
           <button 
             onClick={() => handleApprove('Finance')}
             disabled={!pendingLegal || loading}
-            className="btn-secondary"
+            className="btn-secondary w-full sm:w-auto flex-shrink-0"
           >
-            {loading === 'Finance' ? 'Scheduling...' : 'Request Finance Approval'}
+            {loading === 'Finance' ? 'Scheduling...' : 'Request Approval'}
           </button>
         </div>
       </div>

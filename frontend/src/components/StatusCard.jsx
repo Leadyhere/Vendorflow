@@ -1,82 +1,53 @@
 import { Link } from 'react-router-dom';
-import { Building2, Clock, CheckCircle2, AlertCircle, FileText } from 'lucide-react';
 import clsx from 'clsx';
 
 export default function StatusCard({ vendor }) {
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case 'documents pending':
-        return 'bg-amber-50 text-amber-700 border-amber-200';
+        return 'text-amber-400 bg-amber-900/30 border border-amber-900/50';
       case 'under review':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
+        return 'text-primary-400 bg-primary-900/30 border border-primary-900/50';
       case 'approved':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'rejected':
-      case 'issues found':
-        return 'bg-rose-50 text-rose-700 border-rose-200';
+        return 'text-emerald-400 bg-emerald-900/30 border border-emerald-900/50';
       default:
-        return 'bg-surface-50 text-surface-600 border-surface-200';
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch (status.toLowerCase()) {
-      case 'documents pending':
-        return <Clock className="w-4 h-4 mr-1.5" />;
-      case 'under review':
-        return <FileText className="w-4 h-4 mr-1.5" />;
-      case 'approved':
-        return <CheckCircle2 className="w-4 h-4 mr-1.5" />;
-      case 'rejected':
-      case 'issues found':
-        return <AlertCircle className="w-4 h-4 mr-1.5" />;
-      default:
-        return <Clock className="w-4 h-4 mr-1.5" />;
+        return 'text-dark-300 bg-dark-800 border border-dark-700';
     }
   };
 
   const receivedDocs = vendor.documents?.filter(d => d.status === 'Received').length || 0;
   const totalDocs = vendor.documents?.length || 0;
-  const progress = totalDocs > 0 ? (receivedDocs / totalDocs) * 100 : 0;
 
   return (
     <Link to={`/vendor/${vendor.id}`} className="block group">
-      <div className="glass-panel p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-brand-200 relative overflow-hidden">
-        {/* Progress Bar Background */}
-        <div 
-          className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-brand-400 to-brand-600 transition-all duration-500 ease-out" 
-          style={{ width: `${progress}%` }} 
-        />
-        
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex items-center space-x-3">
-            <div className="p-2.5 bg-surface-50 rounded-xl group-hover:bg-brand-50 transition-colors">
-              <Building2 className="w-5 h-5 text-surface-500 group-hover:text-brand-600 transition-colors" />
+      <div className="card-panel p-8 transition-all duration-300 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] hover:-translate-y-2 hover:border-primary-500/50 h-full flex flex-col">
+        <div className="mb-6">
+          <div className="flex items-center space-x-4 mb-2">
+            <div className="w-12 h-12 rounded-2xl bg-dark-900 border border-dark-700 text-white flex items-center justify-center font-display font-bold text-xl shadow-inner group-hover:border-primary-500/50 transition-colors">
+              {vendor.company_name.charAt(0)}
             </div>
-            <div>
-              <h3 className="font-semibold text-surface-900 group-hover:text-brand-700 transition-colors">
-                {vendor.company_name}
-              </h3>
-              <span className="text-xs font-medium text-surface-400 uppercase tracking-wider">
-                {vendor.vendor_type} Vendor
-              </span>
-            </div>
+            <h3 className="text-xl font-display font-bold text-white group-hover:text-primary-400 transition-colors">
+              {vendor.company_name}
+            </h3>
           </div>
+          <p className="text-xs font-bold text-dark-500 uppercase tracking-widest ml-16 mt-[-10px]">
+            {vendor.vendor_type}
+          </p>
         </div>
 
-        <div className="space-y-4">
-          <div className={clsx("inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border", getStatusColor(vendor.status))}>
-            {getStatusIcon(vendor.status)}
-            {vendor.status}
+        <div className="mt-auto space-y-6">
+          <div className="flex justify-between items-center text-sm border-b border-dark-700/50 pb-4">
+            <span className="text-dark-400">Documentation</span>
+            <span className="font-bold text-white">{receivedDocs} / {totalDocs}</span>
           </div>
-
-          <div className="flex justify-between items-end">
-            <div className="text-sm text-surface-500">
-              <span className="font-medium text-surface-900">{receivedDocs}</span> of {totalDocs} docs
+          
+          <div className="flex justify-between items-center">
+            <div className={clsx("inline-flex items-center px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider", getStatusColor(vendor.status))}>
+              {vendor.status}
             </div>
-            <div className="text-xs text-surface-400">
-              Added {new Date(vendor.created_at).toLocaleDateString()}
-            </div>
+            <span className="text-xs font-medium text-dark-500">
+              {new Date(vendor.created_at).toLocaleDateString()}
+            </span>
           </div>
         </div>
       </div>

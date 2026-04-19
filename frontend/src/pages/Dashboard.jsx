@@ -9,7 +9,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchVendors();
-    // Poll every 30 seconds as requested
     const interval = setInterval(fetchVendors, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -29,51 +28,52 @@ export default function Dashboard() {
   const approvedCount = vendors.filter(v => v.status === 'Approved').length;
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="flex items-end justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-surface-900 tracking-tight">Procurement Dashboard</h1>
-          <p className="text-surface-500 mt-1">Monitor and manage all vendor onboarding workflows.</p>
+    <div>
+      <div className="text-white py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto text-center space-y-6 relative z-10">
+          <h1 className="text-5xl md:text-6xl font-display font-bold text-white tracking-tight">
+            Where Procurement<br/>Meets <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-primary-600">Efficiency</span>
+          </h1>
+          <p className="text-xl text-dark-300 max-w-2xl mx-auto font-light leading-relaxed">
+            Transform your vendor onboarding process. We blend AI, automation, and intelligent routing to create a seamless experience.
+          </p>
         </div>
       </div>
 
-      {/* Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: 'Total Vendors', value: vendors.length, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
-          { label: 'Pending Docs', value: pendingCount, icon: FileClock, color: 'text-amber-600', bg: 'bg-amber-50' },
-          { label: 'Approved', value: approvedCount, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          { label: 'Avg Onboarding', value: '4.2 Days', icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50' },
-        ].map((metric, i) => (
-          <div key={i} className="glass-panel p-5 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-surface-500">{metric.label}</p>
-              <p className="text-2xl font-bold text-surface-900 mt-1">{metric.value}</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 mb-20 relative z-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { label: 'Total Vendors', value: vendors.length, icon: Users },
+            { label: 'Pending Docs', value: pendingCount, icon: FileClock },
+            { label: 'Approved', value: approvedCount, icon: CheckCircle },
+            { label: 'Avg Onboarding', value: '4.2 Days', icon: TrendingUp },
+          ].map((metric, i) => (
+            <div key={i} className="card-panel p-8 text-center flex flex-col items-center justify-center space-y-4 hover:scale-[1.03] transition-transform duration-300 hover:border-primary-500/30">
+              <div className="p-4 rounded-2xl bg-dark-900 border border-dark-700 text-primary-400 shadow-inner">
+                <metric.icon className="w-8 h-8" />
+              </div>
+              <div>
+                <p className="text-4xl font-display font-bold text-white">{metric.value}</p>
+                <p className="text-sm font-medium text-dark-400 uppercase tracking-wider mt-2">{metric.label}</p>
+              </div>
             </div>
-            <div className={`p-3 rounded-xl ${metric.bg}`}>
-              <metric.icon className={`w-6 h-6 ${metric.color}`} />
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Vendor Grid */}
-      <div>
-        <h2 className="text-xl font-semibold text-surface-900 mb-4 flex items-center">
-          Active Onboardings
-          {loading && <span className="ml-3 text-sm font-normal text-surface-400 animate-pulse">Syncing...</span>}
-        </h2>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-display font-bold text-white">Our Vendors</h2>
+          <p className="text-dark-400 mt-4 text-lg">Active onboarding workflows at a glance.</p>
+        </div>
         
         {vendors.length === 0 && !loading ? (
-          <div className="glass-panel p-12 text-center">
-            <div className="w-16 h-16 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Users className="w-8 h-8 text-brand-500" />
-            </div>
-            <h3 className="text-lg font-medium text-surface-900">No vendors found</h3>
-            <p className="text-surface-500 mt-1 max-w-sm mx-auto">Start by onboarding a new vendor to see them appear on your dashboard.</p>
+          <div className="card-panel p-16 text-center max-w-2xl mx-auto border-2 border-dashed border-dark-700 bg-dark-900">
+            <h3 className="text-2xl font-display font-bold text-white">No vendors found</h3>
+            <p className="text-dark-400 mt-2 text-lg">Start by onboarding a new vendor.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {vendors.map(v => (
               <StatusCard key={v.id} vendor={v} />
             ))}

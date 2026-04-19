@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { UploadCloud, FileType, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { UploadCloud, Loader2 } from 'lucide-react';
 import api from '../api/client';
 
 export default function DocUpload({ vendorId, docName, onUploadSuccess }) {
@@ -10,7 +10,6 @@ export default function DocUpload({ vendorId, docName, onUploadSuccess }) {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate type and size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert("File must be under 5MB");
       return;
@@ -19,7 +18,6 @@ export default function DocUpload({ vendorId, docName, onUploadSuccess }) {
     setUploading(true);
     const formData = new FormData();
     formData.append('file', file);
-    // In a real app we'd pass docName to map it accurately
     formData.append('doc_name', docName);
 
     try {
@@ -39,7 +37,7 @@ export default function DocUpload({ vendorId, docName, onUploadSuccess }) {
   };
 
   return (
-    <div className="mt-3">
+    <div className="mt-4 sm:mt-0">
       <input 
         type="file" 
         ref={fileInputRef} 
@@ -50,17 +48,17 @@ export default function DocUpload({ vendorId, docName, onUploadSuccess }) {
       <button 
         onClick={() => fileInputRef.current?.click()}
         disabled={uploading}
-        className="flex items-center text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors disabled:opacity-50"
+        className="flex items-center text-sm font-bold text-primary-400 hover:text-white bg-dark-800 hover:bg-dark-700 border border-dark-700 px-4 py-2 rounded-full transition-all disabled:opacity-50"
       >
         {uploading ? (
           <>
-            <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
-            Extracting via AI...
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Extracting...
           </>
         ) : (
           <>
-            <UploadCloud className="w-4 h-4 mr-1.5" />
-            Upload Document
+            <UploadCloud className="w-4 h-4 mr-2" />
+            Upload
           </>
         )}
       </button>

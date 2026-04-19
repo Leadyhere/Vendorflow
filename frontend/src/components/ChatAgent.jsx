@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Send, Bot, User, Loader2 } from 'lucide-react';
+import { Send, Bot, Loader2 } from 'lucide-react';
 import api from '../api/client';
 
 export default function ChatAgent() {
@@ -30,19 +30,24 @@ export default function ChatAgent() {
   };
 
   return (
-    <div className="glass-panel h-[400px] flex flex-col mt-8 relative overflow-hidden">
-      <div className="bg-gradient-to-r from-brand-600 to-brand-500 p-4 text-white flex items-center shadow-md z-10">
-        <Bot className="w-5 h-5 mr-2" />
-        <h3 className="font-medium text-sm">Gemini AI Assistant</h3>
+    <div className="card-panel h-[500px] flex flex-col bg-dark-900 border border-dark-700/50 relative overflow-hidden">
+      <div className="bg-dark-950 p-6 flex items-center border-b border-dark-800 relative z-10">
+        <div className="w-10 h-10 rounded-full bg-primary-600/20 border border-primary-500/30 flex items-center justify-center mr-4 shadow-inner">
+          <Bot className="w-5 h-5 text-primary-400" />
+        </div>
+        <div>
+          <h3 className="font-display font-bold text-white tracking-wide">Gemini Agent</h3>
+          <p className="text-xs text-primary-400 font-medium">Online & Ready</p>
+        </div>
       </div>
       
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-surface-50/50">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-dark-900/50">
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm shadow-sm ${
+            <div className={`max-w-[85%] rounded-[1.5rem] px-6 py-4 text-[14px] font-medium leading-relaxed shadow-sm ${
               msg.role === 'user' 
-                ? 'bg-brand-600 text-white rounded-br-none' 
-                : 'bg-white text-surface-800 rounded-bl-none border border-surface-100'
+                ? 'bg-primary-600 text-white rounded-br-sm shadow-primary-900/20' 
+                : 'bg-dark-800 text-dark-200 rounded-bl-sm border border-dark-700'
             }`}>
               {msg.content}
             </div>
@@ -50,20 +55,20 @@ export default function ChatAgent() {
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-white border border-surface-100 text-surface-500 rounded-2xl rounded-bl-none px-4 py-2 text-sm flex items-center shadow-sm">
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              Thinking...
+            <div className="bg-dark-800 border border-dark-700 text-dark-400 rounded-[1.5rem] rounded-bl-sm px-6 py-4 text-[14px] font-medium flex items-center shadow-sm">
+              <Loader2 className="w-4 h-4 animate-spin mr-3 text-primary-500" />
+              Processing...
             </div>
           </div>
         )}
       </div>
 
-      <form onSubmit={handleSend} className="p-3 bg-white border-t border-surface-100 z-10">
-        <div className="relative">
+      <form onSubmit={handleSend} className="p-4 bg-dark-950 border-t border-dark-800 relative z-10">
+        <div className="relative flex items-center">
           <input
             type="text"
-            className="w-full bg-surface-50 border border-surface-200 rounded-full pl-4 pr-12 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
-            placeholder="Ask about a vendor..."
+            className="w-full bg-dark-800 border border-dark-700 rounded-full pl-6 pr-14 py-4 text-[14px] font-medium text-white focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 placeholder:text-dark-500"
+            placeholder="Command the agent..."
             value={input}
             onChange={e => setInput(e.target.value)}
             disabled={loading}
@@ -71,9 +76,9 @@ export default function ChatAgent() {
           <button 
             type="submit" 
             disabled={loading || !input.trim()}
-            className="absolute right-1 top-1 bottom-1 p-2 bg-brand-600 text-white rounded-full hover:bg-brand-700 disabled:opacity-50 transition-colors"
+            className="absolute right-2 p-2.5 bg-primary-600 text-white rounded-full hover:bg-primary-500 disabled:opacity-50 transition-colors shadow-md shadow-primary-900/40"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-5 h-5" />
           </button>
         </div>
       </form>
