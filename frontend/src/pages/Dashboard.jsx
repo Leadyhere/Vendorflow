@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Users, FileClock, CheckCircle, TrendingUp } from 'lucide-react';
 import api from '../api/client';
 import StatusCard from '../components/StatusCard';
@@ -7,13 +7,7 @@ export default function Dashboard() {
   const [vendors, setVendors] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchVendors();
-    const interval = setInterval(fetchVendors, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchVendors = async () => {
+  const fetchVendors = useCallback(async () => {
     try {
       const res = await api.get('/api/vendors');
       setVendors(res.data.vendors || []);
@@ -22,7 +16,21 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const initialLoad = window.setTimeout(() => {
+      void fetchVendors();
+    }, 0);
+    const interval = window.setInterval(() => {
+      void fetchVendors();
+    }, 30000);
+
+    return () => {
+      window.clearTimeout(initialLoad);
+      window.clearInterval(interval);
+    };
+  }, [fetchVendors]);
 
   const pendingCount = vendors.filter(v => v.status === 'Documents pending').length;
   const approvedCount = vendors.filter(v => v.status === 'Approved').length;

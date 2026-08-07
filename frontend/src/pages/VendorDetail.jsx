@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, Clock } from 'lucide-react';
 import api from '../api/client';
@@ -11,7 +11,7 @@ export default function VendorDetail() {
   const [vendor, setVendor] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchVendor = async () => {
+  const fetchVendor = useCallback(async () => {
     try {
       const res = await api.get(`/api/vendors/${id}`);
       setVendor(res.data);
@@ -20,13 +20,21 @@ export default function VendorDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
-    fetchVendor();
-    const interval = setInterval(fetchVendor, 15000);
-    return () => clearInterval(interval);
-  }, [id]);
+    const initialLoad = window.setTimeout(() => {
+      void fetchVendor();
+    }, 0);
+    const interval = window.setInterval(() => {
+      void fetchVendor();
+    }, 15000);
+
+    return () => {
+      window.clearTimeout(initialLoad);
+      window.clearInterval(interval);
+    };
+  }, [fetchVendor]);
 
   if (loading && !vendor) return <div className="flex justify-center py-32"><div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div></div>;
   if (!vendor) return <div className="text-center py-32 text-dark-500 text-lg">Vendor not found.</div>;
