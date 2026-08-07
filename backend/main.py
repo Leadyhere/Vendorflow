@@ -22,7 +22,7 @@ app = FastAPI(title="VendorFlow API")
 # Configure CORS for frontend access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("FRONTEND_URL", "*")],
+    allow_origins=[origin.strip() for origin in os.getenv("FRONTEND_URL", "http://localhost:5173").split(",") if origin.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -65,7 +65,7 @@ def auth_status():
 @app.post("/api/vendors")
 def create_vendor(vendor: VendorCreate):
     """Create a new vendor in Sheets."""
-    vendor_id = sheets_service.create_vendor(vendor.dict())
+    vendor_id = sheets_service.create_vendor(vendor.model_dump())
     return {"vendor_id": vendor_id, "status": "Created"}
 
 @app.get("/api/vendors")
